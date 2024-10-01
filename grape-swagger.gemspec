@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.metadata['rubygems_mfa_required'] = 'true'
 
-  s.required_ruby_version = '>= 3.0'
+  s.required_ruby_version = '>= 2.7'
   s.add_dependency 'grape', '>= 1.7', '< 3.0'
   s.add_dependency 'rack-test', '~> 2'
 
