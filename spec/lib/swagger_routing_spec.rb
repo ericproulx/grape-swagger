@@ -48,7 +48,7 @@ describe GrapeSwagger::SwaggerRouting do
         namespace_stackable[:mount_path] = ['//foo/', '/bar']
         endpoint = instance_double(
           'endpoint',
-          options: {},
+          endpoints: nil,
           namespace: '/bar/widgets',
           inheritable_setting: instance_double('inheritable_setting', namespace_stackable: namespace_stackable)
         )

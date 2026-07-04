@@ -47,7 +47,7 @@ module GrapeSwagger
       while endpoints.any?
         endpoint = endpoints.shift
 
-        endpoints.push(*endpoint.options[:app].endpoints) if endpoint.options[:app]
+        endpoints.push(*endpoint.endpoints) if endpoint.endpoints
         namespace_stackable = endpoint.inheritable_setting.namespace_stackable
         ns = (namespace_stackable[:namespace] || []).last
         next unless ns
