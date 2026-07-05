@@ -60,6 +60,43 @@ describe GrapeSwagger::SwaggerRouting do
         expect(app.send(:combine_namespaces, app)).to eq('foo/bar/bar/widgets' => namespace)
       end
     end
+
+    context 'when an endpoint exposes nested endpoints' do
+      it 'processes sub-endpoints returned by the endpoint accessor' do
+        parent_namespace_stackable = Grape::Util::StackableValues.new
+        parent_namespace_stackable[:namespace] = namespace
+        parent_namespace_stackable[:mount_path] = ['/api']
+
+        child_namespace = instance_double('child_namespace', options: {})
+        child_namespace_stackable = Grape::Util::StackableValues.new
+        child_namespace_stackable[:namespace] = child_namespace
+        child_namespace_stackable[:mount_path] = ['/api', '/v1']
+
+        child_endpoint = instance_double(
+          'child_endpoint',
+          endpoints: nil,
+          namespace: '/widgets',
+          inheritable_setting: instance_double('child_inheritable_setting', namespace_stackable: child_namespace_stackable)
+        )
+
+        parent_endpoint = instance_double(
+          'parent_endpoint',
+          endpoints: [child_endpoint],
+          namespace: '/parent',
+          inheritable_setting: instance_double('parent_inheritable_setting', namespace_stackable: parent_namespace_stackable)
+        )
+
+        app = Class.new
+        app.extend(GrapeSwagger::SwaggerDocumentationAdder)
+
+        allow(app).to receive(:endpoints).and_return([parent_endpoint])
+
+        expect(app.send(:combine_namespaces, app)).to eq(
+          'api/parent' => namespace,
+          'api/v1/widgets' => child_namespace
+        )
+      end
+    end
   end
 
   describe '#route_path_start_with?' do
